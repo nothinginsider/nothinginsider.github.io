@@ -2790,4 +2790,82 @@ async function downloadAIWall(btn) {
         btn.style.pointerEvents = 'all';
     }, 2000);
 }
+
+
+
+async function generateAIWall() {
+    const promptInput = document.getElementById('aiPrompt');
+    const ratio = document.getElementById('aiRatio').value;
+    const btn = document.getElementById('genBtn');
+    const bar = btn.querySelector('.progress-bar');
+    const txt = btn.querySelector('.btn-text');
+    const resultDiv = document.getElementById('aiResult');
+    const aiImg = document.getElementById('aiImg');
+
+    const prompt = promptInput.value.trim();
+
+    if (!prompt) {
+        alert("PLEASE ENTER SOMETHING");
+        return;
+    }
+
+    // UI Loading State
+    btn.style.pointerEvents = 'none';
+    txt.innerText = 'IMAGINING...';
+    bar.style.transition = 'width 60s cubic-bezier(0.4, 0, 0.2, 1)'; 
+    bar.style.width = '90%';
+    
+    resultDiv.style.display = 'none';
+    aiImg.style.opacity = '0';
+
+    let width = 1080, height = 1920; 
+    if (ratio === "16:9") { width = 1920; height = 1080; }
+    if (ratio === "1:1") { width = 1080; height = 1080; }
+
+    const seed = Math.floor(Math.random() * 100000);
+    const enhancedPrompt = encodeURIComponent(`${prompt}, nothing technology style, aesthetic, minimalist, high quality, 8k, dark mode`);
+    const apiUrl = `https://image.pollinations.ai/prompt/${enhancedPrompt}?width=${width}&height=${height}&seed=${seed}&nologo=true&model=flux`;
+
+    try {
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) throw new Error("Server Error");
+
+        const blob = await response.blob();
+        
+        // --- YAHAN HAI MAGIC LOGIC ---
+        
+        // 1 MB = 1,048,576 bytes
+        // Logic: Agar image 1MB (1000000 bytes) se badi hai, toh wo pakka Error Poster hai.
+        if (blob.size > 1000000) {
+             throw new Error("Rate Limit Image Detected (File Too Big)");
+        }
+
+        // -----------------------------
+
+        const imgUrl = URL.createObjectURL(blob);
+        aiImg.src = imgUrl;
+        resultDiv.style.display = 'block';
+
+        setTimeout(() => {
+            aiImg.style.opacity = '1';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+            bar.style.width = '0%';
+            bar.style.transition = 'none';
+            txt.innerText = 'GENERATE AGAIN';
+            btn.style.pointerEvents = 'all';
+        }, 100);
+
+    } catch (error) {
+        console.warn("Generation Skipped:", error.message);
+        
+        // User ko Alert do ki abhi server busy hai
+        alert("SERVER BUSY (High Traffic). TRY IN 30 SECONDS.");
+        
+        bar.style.width = '0%';
+        bar.style.transition = 'none';
+        txt.innerText = 'TRY AGAIN';
+        btn.style.pointerEvents = 'all';
+    }
+}
 </script>
