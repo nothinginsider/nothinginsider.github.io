@@ -711,7 +711,7 @@
             if (data.results.length > 0) {
                 currentPlaylist = data.results.map(song => ({
                     url: song.previewUrl, art: song.artworkUrl100.replace('100x100', '400x400'),
-                    title: song.trackName.replace(/mzaf_\d+/g, "NOTHING TRACK").toUpperCase(), artist: "NOTHING COMMUNITY"
+                    title: song.trackName.replace(/mzaf_\d+/g, "NOTHING TRACK").toUpperCase(), artist: "NOTHING SPACE"
                 }));
                 currentIndex = 0; card.style.display = "block"; loadSong(0);
             } else alert("NOTHING FOUND");
@@ -728,7 +728,7 @@
         if(document.getElementById('mini-art')) document.getElementById('mini-art').src = lastPlayedArt; 
         player.src = song.url; player.load(); togglePlay(true);
         if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({ title: song.title, artist: 'NOTHING COMMUNITY', artwork: [{ src: song.art, sizes: '512x512', type: 'image/png' }] });
+            navigator.mediaSession.metadata = new MediaMetadata({ title: song.title, artist: 'NOTHING SPACE', artwork: [{ src: song.art, sizes: '512x512', type: 'image/png' }] });
             navigator.mediaSession.setActionHandler('previoustrack', prevSong); navigator.mediaSession.setActionHandler('nexttrack', nextSong);
             navigator.mediaSession.setActionHandler('play', () => togglePlay(true)); navigator.mediaSession.setActionHandler('pause', () => togglePlay());
         }
