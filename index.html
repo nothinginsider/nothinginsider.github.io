@@ -457,11 +457,36 @@
   <div class="footer-links">
 <a href="javascript:void(0)" onclick="openScreen('aboutScr')">ABOUT</a>
 <a href="javascript:void(0)" onclick="openScreen('privacyScr')">PRIVACY</a>
+<a href="javascript:void(0)" onclick="openScreen('termsScr')">TERMS</a>
 <a href="javascript:void(0)" onclick="openScreen('disclaimerScr')">DISCLAIMER</a>
 <a href="javascript:void(0)" onclick="openScreen('contactScr')">CONTACT</a>
  </div>
   <p>NOTHING SPACE © 2026<br>DESIGNED FOR THE COMMUNITY</p>
 </footer>
+<div id="aboutScr" class="screen">
+  <div class="modal">
+    <span class="close-icon" onclick="closeScreen('aboutScr')">×</span>
+    <h2>ABOUT NOTHING SPACE</h2>
+    <div class="detail-card">
+      <p>
+        Welcome to <b>Nothing Space</b>, the premier community-driven resource hub dedicated exclusively to Nothing™ technology enthusiasts.
+      </p>
+      
+      <h3 style="margin-top:15px; font-size:1.2rem;">OUR MISSION</h3>
+      <p>
+        Our goal is to simplify the user experience for Nothing Phone users. We curate official OTA firmware links, provide high-quality aesthetic assets (Wallpapers/Ringtones), and offer safe, tested tools for device customization.
+      </p>
+
+      <h3 style="margin-top:15px; font-size:1.2rem;">WHY CHOOSE US?</h3>
+      <ul style="margin-left:20px; opacity:0.7; list-style:square;">
+        <li><b>Reliability:</b> All firmware links are sourced directly from official repositories.</li>
+        <li><b>Safety:</b> We prioritize user security and verify all tools before sharing.</li>
+        <li><b>Community First:</b> We are built by fans, for fans.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <div id="aboutScr" class="screen">
   <div class="modal">
     <span class="close-icon" onclick="closeScreen('aboutScr')">×</span>
@@ -507,6 +532,32 @@
   </div>
 </div>
 
+<div id="termsScr" class="screen">
+  <div class="modal">
+    <span class="close-icon" onclick="closeScreen('termsScr')">×</span>
+    <h2>TERMS & CONDITIONS</h2>
+    <div class="detail-card">
+      <p style="font-size:0.9rem; opacity:0.6; margin-bottom:10px;">Effective Date: January 2026</p>
+      
+      <p>Welcome to Nothing Space! By accessing this website, we assume you accept these terms and conditions. Do not continue to use Nothing Space if you do not agree to take all of the terms and conditions stated on this page.</p>
+
+      <h3 style="margin-top:15px; font-size:1.1rem;">LICENSE</h3>
+      <p>Unless otherwise stated, Nothing Space and/or its licensors own the intellectual property rights for all material on Nothing Space. All intellectual property rights are reserved. You may access this from Nothing Space for your own personal use subjected to restrictions set in these terms and conditions.</p>
+      <ul style="margin-left:20px; opacity:0.7; list-style:square; margin-top:5px;">
+        <li>You must not republish material from Nothing Space.</li>
+        <li>You must not sell, rent, or sub-license material from Nothing Space.</li>
+        <li>You must not reproduce, duplicate or copy material from Nothing Space.</li>
+      </ul>
+
+      <h3 style="margin-top:15px; font-size:1.1rem;">HYPERLINKING</h3>
+      <p>Our Service may contain links to third-party web sites or services (like Official Nothing™ Firmware sources) that are not owned or controlled by Nothing Space. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party web sites.</p>
+
+      <h3 style="margin-top:15px; font-size:1.1rem;">CHANGES TO TERMS</h3>
+      <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.</p>
+    </div>
+  </div>
+</div>
+
 <div id="disclaimerScr" class="screen">
   <div class="modal">
     <span class="close-icon" onclick="closeScreen('disclaimerScr')">×</span>
@@ -544,6 +595,7 @@
     </div>
   </div>
 </div>
+
 <script>
     const CONFIG = {
         BETA_TOOL_URL: "https://github.com/nothingcommunity/Testing/raw/refs/heads/main/Apps/Beta%20Updates%20Hub.apk",
