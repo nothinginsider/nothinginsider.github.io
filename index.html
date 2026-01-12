@@ -1364,4 +1364,68 @@ async function adminControl(msgId, currentName, currentStatus, targetUUID) {
         alert("WRONG PASSWORD!");
     }
 }
+// --- LONG PRESS LOGIC VARIABLES ---
+let pressTimer;
+
+// Jab user touch karega (Start Timer)
+function startPress(id, name, verified, uuid) {
+    // 5000 ms = 5 Seconds
+    pressTimer = setTimeout(() => {
+        // Agar mobile hai to halka vibration hoga (Feedback)
+        if (navigator.vibrate) navigator.vibrate(50); 
+        
+        // 3 second baad Admin Panel khulega
+        adminControl(id, name, verified, uuid); 
+    }, 3000); 
+}
+
+// Jab user ungli hata le ya hila le (Cancel Timer)
+function cancelPress() {
+    clearTimeout(pressTimer);
+}
+    async function loadMessages() {
+        try {
+            // Data fetch karo
+            const [chatRes, verifyRes] = await Promise.all([
+                fetch(DB_URL),
+                fetch("https://nothingcommunity-7664f-default-rtdb.firebaseio.com/verified_users.json")
+            ]);
+
+            const data = await chatRes.json();
+            const verifiedData = await verifyRes.json() || {}; 
+
+            const board = document.getElementById('msgBoard');
+            
+            if (!data) { 
+                board.innerHTML = '<p style="opacity:0.4; text-align:center;">NO MESSAGES YET.</p>'; 
+                return; 
+            }
+
+            const messages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            
+            board.innerHTML = messages.map(m => {
+                const isUserVerified = (m.uuid && verifiedData[m.uuid] === true);
+                const tickHtml = isUserVerified ? '<i class="fa-solid fa-circle-check" style="color:#1da1f2; margin-left:4px; font-size:0.8rem;"></i>' : '';
+                
+                // ✅ YAHAN CHANGE KIYA HAI: onclick hata diya, mouse/touch events laga diye
+                return `
+                <div class="msg-bubble" 
+                     style="user-select: none; -webkit-user-select: none;" 
+                     onmousedown="startPress('${m.id}', '${m.userName || 'USER'}', ${isUserVerified}, '${m.uuid || ''}')" 
+                     ontouchstart="startPress('${m.id}', '${m.userName || 'USER'}', ${isUserVerified}, '${m.uuid || ''}')" 
+                     
+                     onmouseup="cancelPress()" 
+                     onmouseleave="cancelPress()" 
+                     ontouchend="cancelPress()" 
+                     ontouchmove="cancelPress()">
+
+                    <span class="u-badge">${m.userName || 'USER'} ${tickHtml}</span>
+                    <p style="text-transform:none; margin:5px 0;">${m.text}</p>
+                    ${m.reply ? `<div class="admin-reply-box"><span class="admin-tag">● ADMIN REPLY</span><p style="text-transform:none; opacity:0.8;">${m.reply}</p></div>` : ''}
+                </div>`;
+            }).join('');
+            
+            board.scrollTop = board.scrollHeight;
+        } catch (e) { console.log(e); }
+    }
 </script>
