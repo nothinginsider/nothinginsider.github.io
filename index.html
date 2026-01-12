@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'/>
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nothing Space - Built Together</title>
 
@@ -47,7 +46,6 @@
             background-size: 32px 32px; z-index: -1; opacity: 0.5; pointer-events: none;
         }
 
-        /* MOON (LEFT SIDE) */
         .moon {
             position: fixed; width: 80px; height: 80px; 
             top: 10%; left: 10%; 
@@ -80,10 +78,9 @@
         .bento { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 1000px; margin: 0 auto; padding: 0 20px 20px; }
         @media (min-width: 768px) { .bento { grid-template-columns: repeat(3, 1fr); } }
 
-        /* --- UPDATED: NO ANIMATION HERE --- */
         .tile { 
             background: var(--card); border: 1px solid var(--border); border-radius: 35px; padding: 25px; cursor: pointer; transition: var(--transition);
-            opacity: 1; transform: none; /* Removed entry animation */
+            opacity: 1; transform: none;
         }
         .tile:hover { border-color: #333; transform: translateY(-2px); }
         .tile:active { transform: scale(0.95); }
@@ -92,7 +89,7 @@
         .full { grid-column: span 2; }
         @media (min-width: 768px) { .full { grid-column: span 1; } }
 
-        /* ================= MODALS (FIXED WIDTH) ================= */
+        /* ================= MODALS ================= */
         .screen { 
             position: fixed; inset: 0; 
             background: rgba(0,0,0,0.6); 
@@ -117,15 +114,12 @@
             position: relative; 
             overflow-y: auto;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-
-            /* Close: Smooth Retract */
             opacity: 0;
             transform: scale(0.9) translateY(30px);
             transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.35s ease;
             will-change: transform, opacity;
         }
 
-        /* Open: Bouncy Effect */
         .screen.active .modal { 
             opacity: 1; 
             transform: scale(1) translateY(0); 
@@ -135,8 +129,7 @@
         .close-icon { 
             position: absolute; right: 25px; top: 25px;
             font-size: 2.2rem; cursor: pointer; opacity: 0.5; 
-            transition: 0.2s; /* No Spin */
-            z-index: 10;
+            transition: 0.2s; z-index: 10;
         }
         .close-icon:hover { opacity: 1; color: var(--text); }
         .modal h2 { margin-bottom: 20px !important; margin-top: 5px !important; line-height: 1; }
@@ -147,7 +140,6 @@
         input.imei-box { text-align: center; letter-spacing: 2px; }
         .arrow-wrapper { position: absolute; right: 25px; pointer-events: none; color: #ffffff; }
 
-        /* GLOBAL BUTTON */
         .btn { 
             position: relative; width: 100%; padding: 18px; border-radius: 22px; border: none; 
             background: var(--text); color: var(--bg); font-size: 1.6rem; 
@@ -157,30 +149,16 @@
         .progress-bar { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: rgba(128,128,128,0.5); z-index: 1; }
         .btn-text { position: relative; z-index: 2; }
         
-        /* --- UPDATED: PLAYGROUND BUTTONS --- */
         .pg-btn {
-            width: 100%;
-            padding: 20px 30px; /* Big padding */
-            border-radius: 22px; /* Pill Shape */
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            font-size: 1.2rem; /* Smaller, cleaner text */
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            margin-bottom: 15px;
-            font-weight: thin;
-            transition: 0.2s;
-            text-transform: uppercase;
+            width: 100%; padding: 20px 30px; border-radius: 22px; background: var(--card);
+            border: 1px solid var(--border); color: var(--text); font-size: 1.2rem; letter-spacing: 1px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; margin-bottom: 15px; font-weight: thin; transition: 0.2s; text-transform: uppercase;
         }
-        .pg-btn i { font-size: 1.2rem; } /* Icon size */
+        .pg-btn i { font-size: 1.2rem; }
         .pg-btn:hover { border-color: var(--text); }
         .pg-btn:active { transform: scale(0.98); background: var(--border); }
 
-        /* DOT ARROWS */
         .dot-arrow { width: 20px; height: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
         .dot-row { display: flex; gap: 2px; }
         .dot { width: 2.5px; height: 2.5px; background: var(--text); border-radius: 50%; }
@@ -208,9 +186,17 @@
         #mini-player { position:absolute; top:85px; right:90px; width:45px; height:45px; border-radius:50%; border:2px solid var(--accent); overflow:hidden; cursor:pointer; display:none; z-index:10; background:#000; }
         #mini-art { width:100%; height:100%; object-fit:cover; display:block; }
 
-        /* ================= WALLPAPERS (FIXED HEIGHT) ================= */
+        /* ================= WALLPAPERS & CARDS (WITH SCROLL ANIMATION) ================= */
         .wp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
-        .wp-card { height: 250px; background: #111; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid var(--text); }
+        
+        .wp-card { 
+            height: 250px; background: #111; border-radius: 25px; position: relative; overflow: hidden; border: 1px solid var(--text);
+            /* Scroll Animation Styles */
+            opacity: 1; transform: translateY(0); transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .wp-card.hidden-state { opacity: 0; transform: translateY(50px) scale(0.95); }
+        .wp-card.scroll-active { opacity: 1; transform: translateY(0) scale(1); }
+
         .wp-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; display: block; }
         .wp-overlay { position: absolute; bottom: 0; width: 100%; padding: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); text-align: center; }
         .wp-overlay p { color: #fff !important; opacity: 1 !important; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
@@ -348,17 +334,16 @@
     <div class="input-group">
         <select id="swSelect" onchange="showLogs()">
             <option value="">SELECT YOUR DEVICE</option>
-            
-<option value="p1">NOTHING PHONE (1)</option>
-<option value="p2">NOTHING PHONE (2)</option>
-<option value="p2a">NOTHING PHONE (2A)</option>
-<option value="p2aplus">NOTHING PHONE (2A) PLUS</option>
-<option value="p3">NOTHING PHONE (3)</option>
-<option value="p3a">NOTHING PHONE (3A)</option>
-<option value="p3apro">NOTHING PHONE (3A) PRO</option>
-<option value="p3alite">NOTHING PHONE (3A) LITE</option>
-<option value="cmf1">CMF PHONE 1</option>
-<option value="cmf2pro">CMF PHONE 2 PRO</option>
+            <option value="p1">NOTHING PHONE (1)</option>
+            <option value="p2">NOTHING PHONE (2)</option>
+            <option value="p2a">NOTHING PHONE (2A)</option>
+            <option value="p2aplus">NOTHING PHONE (2A) PLUS</option>
+            <option value="p3">NOTHING PHONE (3)</option>
+            <option value="p3a">NOTHING PHONE (3A)</option>
+            <option value="p3apro">NOTHING PHONE (3A) PRO</option>
+            <option value="p3alite">NOTHING PHONE (3A) LITE</option>
+            <option value="cmf1">CMF PHONE 1</option>
+            <option value="cmf2pro">CMF PHONE 2 PRO</option>
        </select>
         <div class="arrow-wrapper"><div class="dot-arrow"><div class="dot-row"><div class="dot"></div><div class="dot" style="visibility:hidden"></div><div class="dot"></div></div><div class="dot-row"><div class="dot"></div><div class="dot"></div></div><div class="dot-row"><div class="dot"></div></div></div></div>
     </div>
@@ -417,34 +402,34 @@
     <div class="input-group" style="margin-top:20px;">
         <select id="state" onchange="loadCities()">
             <option value="">SELECT STATE</option>
-<option value="ANDHRA PRADESH">ANDHRA PRADESH</option>
-<option value="ASSAM">ASSAM</option>
-<option value="BIHAR">BIHAR</option>
-<option value="CHANDIGARH">CHANDIGARH</option>
-<option value="CHHATTISGARH">CHHATTISGARH</option>
-<option value="DELHI">DELHI</option>
-<option value="GOA">GOA</option>
-<option value="GUJARAT">GUJARAT</option>
-<option value="HARYANA">HARYANA</option>
-<option value="HIMACHAL PRADESH">HIMACHAL PRADESH</option>
-<option value="JAMMU & KASHMIR">JAMMU & KASHMIR</option>
-<option value="JHARKHAND">JHARKHAND</option>
-<option value="KARNATAKA">KARNATAKA</option>
-<option value="KERALA">KERALA</option>
-<option value="MADHYA PRADESH">MADHYA PRADESH</option>
-<option value="MAHARASHTRA">MAHARASHTRA</option>
-<option value="MEGHALAYA">MEGHALAYA</option>
-<option value="NAGALAND">NAGALAND</option>
-<option value="ODISHA">ODISHA</option>
-<option value="PUDUCHERRY">PUDUCHERRY</option>
-<option value="PUNJAB">PUNJAB</option>
-<option value="RAJASTHAN">RAJASTHAN</option>
-<option value="TAMIL NADU">TAMIL NADU</option>
-<option value="TELANGANA">TELANGANA</option>
-<option value="TRIPURA">TRIPURA</option>
-<option value="UTTAR PRADESH">UTTAR PRADESH</option>
-<option value="UTTARAKHAND">UTTARAKHAND</option>
-<option value="WEST BENGAL">WEST BENGAL</option>
+            <option value="ANDHRA PRADESH">ANDHRA PRADESH</option>
+            <option value="ASSAM">ASSAM</option>
+            <option value="BIHAR">BIHAR</option>
+            <option value="CHANDIGARH">CHANDIGARH</option>
+            <option value="CHHATTISGARH">CHHATTISGARH</option>
+            <option value="DELHI">DELHI</option>
+            <option value="GOA">GOA</option>
+            <option value="GUJARAT">GUJARAT</option>
+            <option value="HARYANA">HARYANA</option>
+            <option value="HIMACHAL PRADESH">HIMACHAL PRADESH</option>
+            <option value="JAMMU & KASHMIR">JAMMU & KASHMIR</option>
+            <option value="JHARKHAND">JHARKHAND</option>
+            <option value="KARNATAKA">KARNATAKA</option>
+            <option value="KERALA">KERALA</option>
+            <option value="MADHYA PRADESH">MADHYA PRADESH</option>
+            <option value="MAHARASHTRA">MAHARASHTRA</option>
+            <option value="MEGHALAYA">MEGHALAYA</option>
+            <option value="NAGALAND">NAGALAND</option>
+            <option value="ODISHA">ODISHA</option>
+            <option value="PUDUCHERRY">PUDUCHERRY</option>
+            <option value="PUNJAB">PUNJAB</option>
+            <option value="RAJASTHAN">RAJASTHAN</option>
+            <option value="TAMIL NADU">TAMIL NADU</option>
+            <option value="TELANGANA">TELANGANA</option>
+            <option value="TRIPURA">TRIPURA</option>
+            <option value="UTTAR PRADESH">UTTAR PRADESH</option>
+            <option value="UTTARAKHAND">UTTARAKHAND</option>
+            <option value="WEST BENGAL">WEST BENGAL</option>
       </select>
         <div class="arrow-wrapper"><div class="dot-arrow"><div class="dot-row"><div class="dot"></div><div class="dot" style="visibility:hidden"></div><div class="dot"></div></div><div class="dot-row"><div class="dot"></div><div class="dot"></div></div><div class="dot-row"><div class="dot"></div></div></div></div>
     </div>
@@ -457,14 +442,15 @@
 
 <footer>
   <div class="footer-links">
-<a href="javascript:void(0)" onclick="openScreen('aboutScr')">ABOUT</a>
-<a href="javascript:void(0)" onclick="openScreen('privacyScr')">PRIVACY</a>
-<a href="javascript:void(0)" onclick="openScreen('termsScr')">TERMS</a>
-<a href="javascript:void(0)" onclick="openScreen('disclaimerScr')">DISCLAIMER</a>
-<a href="javascript:void(0)" onclick="openScreen('contactScr')">CONTACT</a>
+    <a href="javascript:void(0)" onclick="openScreen('aboutScr')">ABOUT</a>
+    <a href="javascript:void(0)" onclick="openScreen('privacyScr')">PRIVACY</a>
+    <a href="javascript:void(0)" onclick="openScreen('termsScr')">TERMS</a>
+    <a href="javascript:void(0)" onclick="openScreen('disclaimerScr')">DISCLAIMER</a>
+    <a href="javascript:void(0)" onclick="openScreen('contactScr')">CONTACT</a>
  </div>
   <p>NOTHING SPACE © 2026<br>DESIGNED FOR THE COMMUNITY</p>
 </footer>
+
 <div id="aboutScr" class="screen">
   <div class="modal">
     <span class="close-icon" onclick="closeScreen('aboutScr')">×</span>
@@ -611,7 +597,6 @@
         applyAutoTheme();
         createStars();
         createMoon();
-        // Removed initScrollReveal call for instant loading
         
         initSoftwareData();
         initServiceData();
@@ -648,7 +633,24 @@
         if(!document.querySelector('.moon')) { const moon = document.createElement('div'); moon.className = 'moon'; document.body.appendChild(moon); }
     }
     
-    // --- SMOOTH ANIMATION LOGIC ---
+    // --- SCROLL ANIMATION LOGIC ---
+    function attachScrollAnimation() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('hidden-state'); 
+                    entry.target.classList.add('scroll-active');    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.wp-card').forEach(card => {
+            card.classList.add('hidden-state'); 
+            observer.observe(card);
+        });
+    }
+
+    // --- SCREEN NAVIGATION ---
     function openScreen(id) {
         const s = document.getElementById(id);
         if(!s) return;
@@ -666,7 +668,7 @@
         setTimeout(() => { s.style.display = 'none'; }, 500);
     }
 
-    // --- MUSIC DOWNLOAD FIX (Clean Name) ---
+    // --- MUSIC DOWNLOAD ---
     async function downloadCurrentSong() {
         const song = currentPlaylist[currentIndex];
         const btn = document.querySelector('#music-card .btn');
@@ -813,20 +815,35 @@
         scInfo.innerHTML = ''; 
         Object.keys(SERVICE_DB[s]).filter(key => key === c || key.startsWith(c + "_")).forEach(key => {
             const d = SERVICE_DB[s][key];
-            scInfo.innerHTML += `<div class="detail-card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><h3 style="font-size:1.4rem;">${d.n}</h3><span class="sc-badge">ID: ${d.c}</span></div><p style="text-transform:none;opacity:0.7;font-size:1rem;margin-bottom:15px;">${d.a}</p><div style="font-size:0.9rem;margin-bottom:15px;"><p>🕒 ${d.t}</p><p>🚫 OFF: ${d.o}</p></div><div class="card-row"><button class="btn" style="flex:1;padding:12px;" onclick="window.open('tel:${d.p}')">CALL</button><button class="btn" style="flex:1;padding:12px;" onclick="window.open('${d.m}')">MAPS</button></div></div>`;
+            scInfo.innerHTML += `<div class="detail-card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><h3 style="font-size:1.4rem;">${d.n}</h3><span class="sc-badge">ID: ${d.c}</span></div><p style="text-transform:none;opacity:0.7;font-size:1rem;margin-bottom:15px;">${d.a}</p><div style="font-size:0.9rem;margin-bottom:15px;"><p>🕒 TIME: ${d.t}</p><p>🚫 OFF : ${d.o}</p></div><div class="card-row"><button class="btn" style="flex:1;padding:12px;" onclick="window.open('tel:${d.p}')">CALL</button><button class="btn" style="flex:1;padding:12px;" onclick="window.open('${d.m}')">MAPS</button></div></div>`;
         });
     }
 
-    async function initWallpaperData() {
-        const grid = document.getElementById('wallpaperGrid');
-        if(!grid.innerHTML.trim()) grid.innerHTML = "<p style='padding:20px'>LOADING...</p>";
-        try { const res = await fetch("https://raw.githubusercontent.com/nothingcommunity/Testing/main/Wallpapers/Walls/wallpapers.json"); const data = await res.json(); const walls = Array.isArray(data) ? data : data.wallpapers; grid.innerHTML = walls.map(w => `<div class="wp-card"><img src="${w.img}"><div class="wp-overlay"><button class="btn" onclick="runDownload(this, '${w.url}')"><div class="progress-bar"></div><span class="btn-text">DOWNLOAD</span></button></div></div>`).join(''); } catch(e) { grid.innerHTML = "ERROR LOADING"; }
-    }
+    // --- UPDATED PRESET (WITH SCROLL ANIM) ---
     async function initPresetData() {
         const grid = document.getElementById('presetGrid');
-        if(!grid.innerHTML.trim()) grid.innerHTML = "<p style='padding:20px'>LOADING...</p>";
-        try { const res = await fetch("https://raw.githubusercontent.com/nothingcommunity/Testing/main/Camera%20Presets/Presets/presets.json"); const data = await res.json(); grid.innerHTML = data.map(p => `<div class="wp-card"><img src="${p.img}"><div class="wp-overlay"><p>${p.id || 'PRESET'}</p><button class="btn" onclick="runDownload(this, '${p.url}')"><div class="progress-bar"></div><span class="btn-text">GET</span></button></div></div>`).join(''); } catch(e) { grid.innerHTML = "ERROR"; }
+        grid.innerHTML = "<p style='padding:20px; text-align:center;'>LOADING PRESETS...</p>";
+        try { 
+            const res = await fetch("https://raw.githubusercontent.com/nothingcommunity/Testing/main/Camera%20Presets/Presets/presets.json"); 
+            const data = await res.json(); 
+            grid.innerHTML = data.map(p => `<div class="wp-card"><img src="${p.img}" loading="lazy"><div class="wp-overlay"><p>${p.id || 'PRESET'}</p><button class="btn" onclick="runDownload(this, '${p.url}')"><div class="progress-bar"></div><span class="btn-text">GET</span></button></div></div>`).join(''); 
+            setTimeout(attachScrollAnimation, 100);
+        } catch(e) { grid.innerHTML = "ERROR"; }
     }
+
+    // --- UPDATED WALLPAPER (WITH SCROLL ANIM) ---
+    async function initWallpaperData() {
+        const grid = document.getElementById('wallpaperGrid');
+        grid.innerHTML = "<p style='padding:20px; text-align:center;'>LOADING WALLPAPERS...</p>";
+        try { 
+            const res = await fetch("https://raw.githubusercontent.com/nothingcommunity/Testing/main/Wallpapers/Walls/wallpapers.json"); 
+            const data = await res.json(); 
+            const walls = Array.isArray(data) ? data : data.wallpapers; 
+            grid.innerHTML = walls.map(w => `<div class="wp-card"><img src="${w.img}" loading="lazy"><div class="wp-overlay"><button class="btn" onclick="runDownload(this, '${w.url}')"><div class="progress-bar"></div><span class="btn-text">DOWNLOAD</span></button></div></div>`).join(''); 
+            setTimeout(attachScrollAnimation, 100); 
+        } catch(e) { grid.innerHTML = "ERROR LOADING"; }
+    }
+
     async function generateAIWall() {
         const prompt = document.getElementById('aiPrompt').value.trim();
         const ratio = document.getElementById('aiRatio').value;
@@ -845,6 +862,13 @@
     }
     async function downloadAIWall(btn) { runDownload(btn, document.getElementById('aiImg').src); }
 
+    // ==========================================
+    //       FIXED CHAT LOGIC (USER NAME PERSISTENCE)
+    // ==========================================
+    
+    // Check if name is already saved in LocalStorage
+    let savedName = localStorage.getItem('ns_user_fixed') || "";
+
     async function loadMessages() {
         try {
             const res = await fetch(DB_URL); const data = await res.json(); const board = document.getElementById('msgBoard');
@@ -854,14 +878,46 @@
             board.scrollTop = board.scrollHeight;
         } catch (e) { console.log(e); }
     }
+
     async function sendMsg() {
         const input = document.getElementById('userMsg');
         const btn = document.querySelector('#feedbackScr button');
         const msg = input.value.trim();
+        
         if (!msg) return;
+
+        // COMMAND TO RESET NAME (Type /reset in chat)
+        if (msg === "/reset") {
+            localStorage.removeItem('ns_user_fixed');
+            savedName = "";
+            alert("NAME RESET! You will be asked for a name next time.");
+            input.value = "";
+            return;
+        }
+
+        // --- NAME CHECK LOGIC ---
+        if (!savedName || savedName === "USER") {
+            let enterName = prompt("ENTER YOUR NAME FOR THE COMMUNITY:");
+            if (!enterName || enterName.trim() === "") {
+                alert("Name is required to send messages.");
+                return;
+            }
+            savedName = enterName.trim().toUpperCase();
+            localStorage.setItem('ns_user_fixed', savedName);
+        }
+
         const originalHTML = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="red-dot-loader"></span>';
-        try { await fetch(DB_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userName: "USER", text: msg, reply: "", timestamp: Date.now() }) }); input.value = ""; await loadMessages(); } catch (e) { alert("FAILED TO SEND"); } finally { btn.disabled = false; btn.innerHTML = originalHTML; }
+        try { 
+            await fetch(DB_URL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ userName: savedName, text: msg, reply: "", timestamp: Date.now() }) 
+            }); 
+            input.value = ""; 
+            await loadMessages(); 
+        } catch (e) { alert("FAILED TO SEND"); } finally { btn.disabled = false; btn.innerHTML = originalHTML; }
     }
+
     async function adminControl(msgId, currentName) {
         const pass = prompt("ADMIN PASSWORD:");
         if (pass === "465610") {
@@ -873,115 +929,7 @@
             loadMessages();
         }
     }
-    function checkImei(btn) {
-        const val = document.getElementById('imeiInput').value;
-        if(val.length !== 15) { alert("ENTER 15 DIGITS"); return; }
-        const bar = btn.querySelector('.progress-bar');
-        bar.style.width = "100%"; bar.style.transition = "width 1s";
-        setTimeout(() => { bar.style.width = "0%"; bar.style.transition = "none"; document.getElementById('imeiResult').innerHTML = `<div class="detail-card"><h3>VERIFIED</h3><p>Valid Nothing Device Structure.</p></div>`; }, 1000);
-    }
 </script>
 
 </body>
 </html>
-<style>/* --- SAFE SCROLL ANIMATION CSS --- */
-.wp-card {
-    /* Opacity 1 rakha hai taaki images gayab na ho */
-    opacity: 1; 
-    transform: translateY(0);
-    transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Ye class JS lagayega animation ke liye */
-.wp-card.hidden-state {
-    opacity: 0;
-    transform: translateY(50px) scale(0.95);
-}
-
-.wp-card.scroll-active {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-</style><script> // Is function ko script me sabse neeche rakhna
-function attachScrollAnimation() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.remove('hidden-state'); // Chupa hua state hatao
-                entry.target.classList.add('scroll-active');    // Active state lagao
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    // Sirf unhi cards ko pakdo jo abhi load huye hain
-    document.querySelectorAll('.wp-card').forEach(card => {
-        // Pehle JS se invisible karo, taaki agar JS fail ho toh CSS se invisible na rahe
-        card.classList.add('hidden-state'); 
-        observer.observe(card);
-    });
-}
-
-// Updated Preset Function
-async function initPresetData() {
-    const grid = document.getElementById('presetGrid');
-    
-    // Loading text dikhao
-    grid.innerHTML = "<p style='padding:20px; text-align:center;'>LOADING PRESETS...</p>";
-    
-    try { 
-        const res = await fetch("https://raw.githubusercontent.com/nothingcommunity/Testing/main/Camera%20Presets/Presets/presets.json"); 
-        const data = await res.json(); 
-        
-        // HTML banao
-        grid.innerHTML = data.map(p => `
-            <div class="wp-card">
-                <img src="${p.img}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy">
-                <div class="wp-overlay">
-                    <p>${p.id || 'PRESET'}</p>
-                    <button class="btn" onclick="runDownload(this, '${p.url}')">
-                        <div class="progress-bar"></div>
-                        <span class="btn-text">GET</span>
-                    </button>
-                </div>
-            </div>
-        `).join(''); 
-
-        // Animation trigger karo
-        setTimeout(attachScrollAnimation, 100);
-
-    } catch(e) { 
-        console.error(e);
-        grid.innerHTML = "<p style='padding:20px; color:red;'>ERROR LOADING IMAGES</p>"; 
-    }
-}
-
-// Updated Wallpaper Function (Isko bhi same logic se update kar lo)
-async function initWallpaperData() {
-    const grid = document.getElementById('wallpaperGrid');
-    grid.innerHTML = "<p style='padding:20px; text-align:center;'>LOADING WALLPAPERS...</p>";
-    
-    try { 
-        const res = await fetch("https://raw.githubusercontent.com/nothingcommunity/Testing/main/Wallpapers/Walls/wallpapers.json"); 
-        const data = await res.json(); 
-        const walls = Array.isArray(data) ? data : data.wallpapers; 
-        
-        grid.innerHTML = walls.map(w => `
-            <div class="wp-card">
-                <img src="${w.img}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy">
-                <div class="wp-overlay">
-                    <button class="btn" onclick="runDownload(this, '${w.url}')">
-                        <div class="progress-bar"></div>
-                        <span class="btn-text">DOWNLOAD</span>
-                    </button>
-                </div>
-            </div>
-        `).join(''); 
-
-        setTimeout(attachScrollAnimation, 100); 
-
-    } catch(e) { 
-        grid.innerHTML = "ERROR LOADING"; 
-    }
-}
-</script>
