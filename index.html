@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'/>
 <html lang="en" data-theme="dark">
@@ -1179,6 +1178,105 @@
                 // UNBAN Logic
                 if(!targetUUID) { alert("ERROR: UUID Missing."); return; }
                 
+                await fetch(banUrl, { method: 'DELETE' });
+                alert("USER UNBANNED ✅");
+            }
+            
+            loadMessages();
+        } 
+    }
+</script><script>    async function loadMessages() {
+        try {
+            // 1. Chat aur Verified List dono ko fetch karo
+            const [chatRes, verifyRes] = await Promise.all([
+                fetch(DB_URL),
+                fetch("https://nothingcommunity-7664f-default-rtdb.firebaseio.com/verified_users.json")
+            ]);
+
+            const data = await chatRes.json();
+            const verifiedData = await verifyRes.json() || {}; // Agar list khali hai toh empty object
+
+            const board = document.getElementById('msgBoard');
+            
+            if (!data) { 
+                board.innerHTML = '<p style="opacity:0.4; text-align:center;">NO MESSAGES YET.</p>'; 
+                return; 
+            }
+
+            const messages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            
+            board.innerHTML = messages.map(m => {
+                // --- MAGIC LOGIC ---
+                // Yahan hum check kar rahe hain ki kya user ka UUID 'verified_users' list mein hai?
+                // Naam kuch bhi ho, agar UUID match hua toh Tick milega.
+                const isUserVerified = (m.uuid && verifiedData[m.uuid] === true);
+
+                const tickHtml = isUserVerified ? '<i class="fa-solid fa-circle-check" style="color:#1da1f2; margin-left:4px; font-size:0.8rem;"></i>' : '';
+                
+                return `
+                <div class="msg-bubble" onclick="adminControl('${m.id}', '${m.userName || 'USER'}', ${isUserVerified}, '${m.uuid || ''}')">
+                    <span class="u-badge">${m.userName || 'USER'} ${tickHtml}</span>
+                    <p style="text-transform:none; margin:5px 0;">${m.text}</p>
+                    ${m.reply ? `<div class="admin-reply-box"><span class="admin-tag">● ADMIN REPLY</span><p style="text-transform:none; opacity:0.8;">${m.reply}</p></div>` : ''}
+                </div>`;
+            }).join('');
+            
+            board.scrollTop = board.scrollHeight;
+        } catch (e) { console.log(e); }
+    }
+    async function adminControl(msgId, currentName, currentStatus, targetUUID) {
+        const pass = prompt("ADMIN PASSWORD:");
+        
+        if (pass === "465610") {
+            const action = prompt(
+                `MANAGE: ${currentName}\nUUID: ${targetUUID ? 'FOUND' : 'MISSING'}\n\n` +
+                "1. REPLY\n" +
+                "2. EDIT NAME\n" +
+                "3. DELETE MSG\n" +
+                "4. " + (currentStatus ? "REMOVE VERIFICATION ❌" : "VERIFY USER ID ✅") + "\n" +
+                "5. BAN USER\n" +
+                "6. UNBAN USER"
+            );
+            
+            const url = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/chat/${msgId}.json`;
+            const banUrl = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/banned/${targetUUID}.json`;
+            // Ye naya URL hai jahan verified IDs save hongi
+            const verifyUrl = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/verified_users/${targetUUID}.json`;
+            
+            if (action === "1") { 
+                const txt = prompt("REPLY:"); 
+                if(txt) await fetch(url, { method: 'PATCH', body: JSON.stringify({ reply: txt }) }); 
+            }
+            else if (action === "2") { 
+                const name = prompt("NEW NAME:", currentName); 
+                if(name) await fetch(url, { method: 'PATCH', body: JSON.stringify({ userName: name.toUpperCase() }) }); 
+            }
+            else if (action === "3") { 
+                if(confirm("DELETE MESSAGE?")) await fetch(url, { method: 'DELETE' }); 
+            }
+            else if (action === "4") {
+                // --- UUID VERIFICATION LOGIC ---
+                if (!targetUUID) { alert("ERROR: UUID Missing (Old Message)"); return; }
+
+                if (currentStatus) {
+                    // Agar verified tha, toh ID delete kar do
+                    await fetch(verifyUrl, { method: 'DELETE' });
+                    alert("VERIFICATION REMOVED ❌");
+                } else {
+                    // Agar verified nahi tha, toh ID add kar do
+                    await fetch(verifyUrl, { method: 'PUT', body: JSON.stringify(true) });
+                    alert("USER ID VERIFIED ✅ (Name change karne par bhi tick rahega)");
+                }
+            }
+            else if (action === "5") {
+                if(!targetUUID) { alert("ERROR: No UUID."); return; }
+                if(confirm(`BAN ${currentName}?`)) {
+                    await fetch(banUrl, { method: 'PUT', body: JSON.stringify(true) });
+                    alert("USER BANNED 🚫");
+                }
+            }
+            else if (action === "6") {
+                if(!targetUUID) { alert("ERROR: UUID Missing."); return; }
                 await fetch(banUrl, { method: 'DELETE' });
                 alert("USER UNBANNED ✅");
             }
