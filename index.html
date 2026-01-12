@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'/>
 <html lang="en" data-theme="dark">
 <head>
@@ -761,13 +760,15 @@
         const originalBtn = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
         try {
-            const res = await fetch(`https://itunes.apple.com/search?limit=250&entity=song&term=${encodeURIComponent(query)}`);
+                        const _0x1 = "aHR0cHM6Ly9pdHVuZXMuYXBwbGUuY29tL3NlYXJjaD9saW1pdD0yNTAmZW50aXR5PXNvbmcmdGVybT0=";
+            const res = await fetch(`${atob(_0x1)}${encodeURIComponent(query)}`);
             const data = await res.json();
             if (data.results.length > 0) {
                 currentPlaylist = data.results.map(song => ({
                     url: song.previewUrl, art: song.artworkUrl100.replace('100x100', '400x400'),
                     title: song.trackName.replace(/mzaf_\d+/g, "NOTHING TRACK").toUpperCase(), artist: "NOTHING SPACE"
                 }));
+
                 currentIndex = 0; card.style.display = "block"; loadSong(0);
             } else alert("NOTHING FOUND");
         } catch (e) { console.error(e); } finally { btn.innerHTML = originalBtn; }
@@ -921,7 +922,7 @@
 
     async function adminControl(msgId, currentName) {
         const pass = prompt("ADMIN PASSWORD:");
-        if (pass === "465610") {
+        if (pass === "000000") {
             const action = prompt("1. REPLY \n2. EDIT NAME \n3. DELETE MESSAGE");
             const url = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/chat/${msgId}.json`;
             if (action === "1") { const txt = prompt("REPLY:"); if(txt) await fetch(url, { method: 'PATCH', body: JSON.stringify({ reply: txt }) }); }
@@ -976,7 +977,7 @@
     }
     async function adminControl(msgId, currentName, currentStatus) {
         const pass = prompt("ADMIN PASSWORD:");
-        if (pass === "465610") {
+        if (pass === "000000") {
             const action = prompt(`MESSAGE: ${currentName}\n\n1. REPLY\n2. EDIT NAME\n3. DELETE\n4. ${currentStatus ? 'UN-VERIFY' : 'VERIFY USER'}`);
             
             const url = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/chat/${msgId}.json`;
@@ -1135,7 +1136,7 @@
     async function adminControl(msgId, currentName, currentStatus, targetUUID) {
         const pass = prompt("ADMIN PASSWORD:");
         
-        if (pass === "465610") {
+        if (pass === "000000") {
             const action = prompt(
                 `MANAGE: ${currentName}\nUUID: ${targetUUID ? 'FOUND' : 'MISSING'}\n\n` +
                 "1. REPLY\n" +
@@ -1227,7 +1228,7 @@
     async function adminControl(msgId, currentName, currentStatus, targetUUID) {
         const pass = prompt("ADMIN PASSWORD:");
         
-        if (pass === "465610") {
+        if (pass === "000000") {
             const action = prompt(
                 `MANAGE: ${currentName}\nUUID: ${targetUUID ? 'FOUND' : 'MISSING'}\n\n` +
                 "1. REPLY\n" +
@@ -1284,4 +1285,83 @@
             loadMessages();
         } 
     }
+</script><script>function stringToHash(string) {
+    let hash = 0;
+    if (string.length === 0) return hash;
+    for (let i = 0; i < string.length; i++) {
+        const char = string.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; 
+    }
+    return hash.toString();
+}
+
+// 2. Updated Admin Control Function
+async function adminControl(msgId, currentName, currentStatus, targetUUID) {
+    const pass = prompt("ADMIN PASSWORD:");
+    
+    if (!pass) return;
+
+  
+    const enteredHash = stringToHash(pass);
+
+    const secretHash = "1540218370"; 
+
+    if (enteredHash === secretHash) {
+        
+        // --- ACCESS GRANTED ---
+        const action = prompt(
+            `MANAGE: ${currentName}\nUUID: ${targetUUID ? 'FOUND' : 'MISSING'}\n\n` +
+            "1. REPLY\n" +
+            "2. EDIT NAME\n" +
+            "3. DELETE MSG\n" +
+            "4. " + (currentStatus ? "REMOVE VERIFICATION ❌" : "VERIFY USER ID ✅") + "\n" +
+            "5. BAN USER\n" +
+            "6. UNBAN USER"
+        );
+        
+        const url = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/chat/${msgId}.json`;
+        const banUrl = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/banned/${targetUUID}.json`;
+        const verifyUrl = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/verified_users/${targetUUID}.json`;
+        
+        if (action === "1") { 
+            const txt = prompt("REPLY:"); 
+            if(txt) await fetch(url, { method: 'PATCH', body: JSON.stringify({ reply: txt }) }); 
+        }
+        else if (action === "2") { 
+            const name = prompt("NEW NAME:", currentName); 
+            if(name) await fetch(url, { method: 'PATCH', body: JSON.stringify({ userName: name.toUpperCase() }) }); 
+        }
+        else if (action === "3") { 
+            if(confirm("DELETE MESSAGE?")) await fetch(url, { method: 'DELETE' }); 
+        }
+        else if (action === "4") {
+            if (!targetUUID) { alert("ERROR: UUID Missing (Old Message)"); return; }
+            if (currentStatus) {
+                await fetch(verifyUrl, { method: 'DELETE' });
+                alert("VERIFICATION REMOVED ❌");
+            } else {
+                await fetch(verifyUrl, { method: 'PUT', body: JSON.stringify(true) });
+                alert("USER ID VERIFIED ✅");
+            }
+        }
+        else if (action === "5") {
+            if(!targetUUID) { alert("ERROR: No UUID."); return; }
+            if(confirm(`BAN ${currentName}?`)) {
+                await fetch(banUrl, { method: 'PUT', body: JSON.stringify(true) });
+                alert("USER BANNED 🚫");
+            }
+        }
+        else if (action === "6") {
+            if(!targetUUID) { alert("ERROR: UUID Missing."); return; }
+            await fetch(banUrl, { method: 'DELETE' });
+            alert("USER UNBANNED ✅");
+        }
+        
+        loadMessages(); 
+
+    } else {
+        alert("WRONG PASSWORD!");
+    }
+}
 </script>
