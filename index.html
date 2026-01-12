@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'/>
 <html lang="en" data-theme="dark">
 <head>
@@ -932,4 +934,256 @@
 </script>
 
 </body>
-</html>
+</html><script>    async function loadMessages() {
+        try {
+            const res = await fetch(DB_URL);
+            const data = await res.json();
+            const board = document.getElementById('msgBoard');
+            
+            if (!data) { 
+                board.innerHTML = '<p style="opacity:0.4; text-align:center;">NO MESSAGES YET.</p>'; 
+                return; 
+            }
+
+            const messages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            
+            // 1. Check karo kaunse users verified hain
+            const verifiedUsers = new Set();
+            messages.forEach(m => {
+                if (m.isVerified === true) {
+                    verifiedUsers.add(m.userName); // Agar ek bhi msg verified hai, toh user verified hai
+                }
+            });
+
+            // 2. Messages display karo
+            board.innerHTML = messages.map(m => {
+                // Check karo agar ye user list mein hai
+                const isUserVerified = verifiedUsers.has(m.userName);
+                const tickHtml = isUserVerified ? '<i class="fa-solid fa-circle-check" style="color:#1da1f2; margin-left:4px; font-size:0.8rem;"></i>' : '';
+                
+                return `
+                <div class="msg-bubble" onclick="adminControl('${m.id}', '${m.userName || 'USER'}', ${m.isVerified})">
+                    <span class="u-badge">
+                        ${m.userName || 'USER'}
+                        ${tickHtml}
+                    </span>
+                    <p style="text-transform:none; margin:5px 0;">${m.text}</p>
+                    ${m.reply ? `<div class="admin-reply-box"><span class="admin-tag">● ADMIN REPLY</span><p style="text-transform:none; opacity:0.8;">${m.reply}</p></div>` : ''}
+                </div>`;
+            }).join('');
+            
+            board.scrollTop = board.scrollHeight;
+        } catch (e) { console.log(e); }
+    }
+    async function adminControl(msgId, currentName, currentStatus) {
+        const pass = prompt("ADMIN PASSWORD:");
+        if (pass === "465610") {
+            const action = prompt(`MESSAGE: ${currentName}\n\n1. REPLY\n2. EDIT NAME\n3. DELETE\n4. ${currentStatus ? 'UN-VERIFY' : 'VERIFY USER'}`);
+            
+            const url = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/chat/${msgId}.json`;
+            
+            if (action === "1") { 
+                const txt = prompt("REPLY:"); 
+                if(txt) await fetch(url, { method: 'PATCH', body: JSON.stringify({ reply: txt }) }); 
+            }
+            else if (action === "2") { 
+                const name = prompt("NEW NAME:", currentName); 
+                if(name) await fetch(url, { method: 'PATCH', body: JSON.stringify({ userName: name.toUpperCase() }) }); 
+            }
+            else if (action === "3") { 
+                if(confirm("DELETE?")) await fetch(url, { method: 'DELETE' }); 
+            }
+            else if (action === "4") {
+                // Yeh user ko permanent verify karega
+                const newStatus = !currentStatus; // True ko false, false ko true
+                await fetch(url, { method: 'PATCH', body: JSON.stringify({ isVerified: newStatus }) });
+                alert(newStatus ? "USER VERIFIED! BLUE TICK ADDED." : "VERIFICATION REMOVED.");
+            }
+            
+                        else if (action === "5") {
+                // BAN Logic: Add UUID to 'banned' node
+                if(confirm(`BAN ${currentName}? They won't be able to chat.`)) {
+                    if(userUUID) {
+                        await fetch(`https://nothingcommunity-7664f-default-rtdb.firebaseio.com/banned/${userUUID}.json`, {
+                            method: 'PUT', body: JSON.stringify(true)
+                        });
+                        alert("USER BANNED SUCCESSFULLY ");
+                    } else {
+                        alert("ERROR: Old message, no ID found.");
+                    }
+                }
+            }
+            else if (action === "6") {
+                // UNBAN Logic
+                if(userUUID) {
+                    await fetch(`https://nothingcommunity-7664f-default-rtdb.firebaseio.com/banned/${userUUID}.json`, { method: 'DELETE' });
+                    alert("USER UNBANNED");
+                }
+            }
+            
+            loadMessages();
+        } 
+    }
+</script><script>    // --- 1. USER UUID SETUP (Hidden ID for Ban System) ---
+    let userUUID = localStorage.getItem('ns_user_uuid');
+    if (!userUUID) {
+        userUUID = 'uid_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
+        localStorage.setItem('ns_user_uuid', userUUID);
+    }
+
+    // --- 2. UPDATED SEND MESSAGE (Checks Ban Status First) ---
+    async function sendMsg() {
+        const input = document.getElementById('userMsg');
+        const btn = document.querySelector('#feedbackScr button');
+        const msg = input.value.trim();
+        
+        if (!msg) return;
+
+        // Reset Name Logic
+        if (msg === "/reset") {
+            localStorage.removeItem('ns_user_fixed');
+            savedName = "";
+            alert("NAME RESET! You will be asked for a name next time.");
+            input.value = "";
+            return;
+        }
+
+        // Name Logic
+        if (!savedName || savedName === "USER") {
+            let enterName = prompt("ENTER YOUR NAME:");
+            if (!enterName || enterName.trim() === "") return;
+            savedName = enterName.trim().toUpperCase();
+            localStorage.setItem('ns_user_fixed', savedName);
+        }
+
+        const originalHTML = btn.innerHTML; 
+        btn.disabled = true; 
+        btn.innerHTML = '<span class="red-dot-loader"></span>';
+
+        try {
+            // STEP A: Check if User is BANNED
+            const banCheck = await fetch(`https://nothingcommunity-7664f-default-rtdb.firebaseio.com/banned/${userUUID}.json`);
+            const isBanned = await banCheck.json();
+
+            if (isBanned === true) {
+                alert("🚫 YOU ARE BANNED FROM THE COMMUNITY.");
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                return; // Stop here
+            }
+
+            // STEP B: Send Message with UUID
+            await fetch(DB_URL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    userName: savedName, 
+                    text: msg, 
+                    reply: "", 
+                    timestamp: Date.now(),
+                    uuid: userUUID, // Sending UUID securely
+                    isVerified: false 
+                }) 
+            }); 
+            
+            input.value = ""; 
+            await loadMessages(); 
+
+        } catch (e) { 
+            console.error(e);
+            alert("FAILED TO SEND"); 
+        } finally { 
+            btn.disabled = false; 
+            btn.innerHTML = originalHTML; 
+        }
+    }
+
+    // --- 3. UPDATED LOAD MESSAGES (Passes UUID to Admin) ---
+    async function loadMessages() {
+        try {
+            const res = await fetch(DB_URL);
+            const data = await res.json();
+            const board = document.getElementById('msgBoard');
+            
+            if (!data) { 
+                board.innerHTML = '<p style="opacity:0.4; text-align:center;">NO MESSAGES YET.</p>'; 
+                return; 
+            }
+
+            const messages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            
+            // Check verified users
+            const verifiedUsers = new Set();
+            messages.forEach(m => { if (m.isVerified === true) verifiedUsers.add(m.userName); });
+
+            board.innerHTML = messages.map(m => {
+                const isUserVerified = verifiedUsers.has(m.userName);
+                const tickHtml = isUserVerified ? '<i class="fa-solid fa-circle-check" style="color:#1da1f2; margin-left:4px; font-size:0.8rem;"></i>' : '';
+                
+                // IMPORTANT: Passing 'm.uuid' to adminControl function
+                return `
+                <div class="msg-bubble" onclick="adminControl('${m.id}', '${m.userName || 'USER'}', ${m.isVerified}, '${m.uuid || ''}')">
+                    <span class="u-badge">${m.userName || 'USER'} ${tickHtml}</span>
+                    <p style="text-transform:none; margin:5px 0;">${m.text}</p>
+                    ${m.reply ? `<div class="admin-reply-box"><span class="admin-tag">● ADMIN REPLY</span><p style="text-transform:none; opacity:0.8;">${m.reply}</p></div>` : ''}
+                </div>`;
+            }).join('');
+            
+            board.scrollTop = board.scrollHeight;
+        } catch (e) { console.log(e); }
+    }
+    // --- 4. ADMIN CONTROL WITH BAN SYSTEM ---
+    async function adminControl(msgId, currentName, currentStatus, targetUUID) {
+        const pass = prompt("ADMIN PASSWORD:");
+        
+        if (pass === "465610") {
+            const action = prompt(
+                `MANAGE: ${currentName}\nUUID: ${targetUUID ? 'FOUND' : 'MISSING'}\n\n` +
+                "1. REPLY\n" +
+                "2. EDIT NAME\n" +
+                "3. DELETE MSG\n" +
+                "4. VERIFY / UNVERIFY\n" +
+                "5. BAN USER\n" +
+                "6. UNBAN USER"
+            );
+            
+            const url = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/chat/${msgId}.json`;
+            const banUrl = `https://nothingcommunity-7664f-default-rtdb.firebaseio.com/banned/${targetUUID}.json`;
+            
+            if (action === "1") { 
+                const txt = prompt("REPLY:"); 
+                if(txt) await fetch(url, { method: 'PATCH', body: JSON.stringify({ reply: txt }) }); 
+            }
+            else if (action === "2") { 
+                const name = prompt("NEW NAME:", currentName); 
+                if(name) await fetch(url, { method: 'PATCH', body: JSON.stringify({ userName: name.toUpperCase() }) }); 
+            }
+            else if (action === "3") { 
+                if(confirm("DELETE MESSAGE?")) await fetch(url, { method: 'DELETE' }); 
+            }
+            else if (action === "4") {
+                const newStatus = !currentStatus;
+                await fetch(url, { method: 'PATCH', body: JSON.stringify({ isVerified: newStatus }) });
+                alert(newStatus ? "USER VERIFIED" : "VERIFICATION REMOVED");
+            }
+            else if (action === "5") {
+                // BAN Logic
+                if(!targetUUID) { alert("ERROR: Cannot Ban. Old message (No UUID)."); return; }
+                
+                if(confirm(`ARE YOU SURE YOU WANT TO BAN ${currentName}?`)) {
+                    await fetch(banUrl, { method: 'PUT', body: JSON.stringify(true) });
+                    alert("USER BANNED 🚫");
+                }
+            }
+            else if (action === "6") {
+                // UNBAN Logic
+                if(!targetUUID) { alert("ERROR: UUID Missing."); return; }
+                
+                await fetch(banUrl, { method: 'DELETE' });
+                alert("USER UNBANNED ✅");
+            }
+            
+            loadMessages();
+        } 
+    }
+</script>
